@@ -3,6 +3,15 @@
         <title>Data Dictionary Manager</title>
     </header>
     <body>
-        Hello world
+        <h2>Project List</h2>
+        {% if project_list %}
+            <ul>
+                {% for project in project_list %}
+                <li><a href="/ddm/{{project.id}}/">{{project.description}}</a></li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p>No projects to show</p>
+        {% endif %}
     </body>
 </html>
