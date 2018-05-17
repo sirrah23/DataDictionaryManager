@@ -4,6 +4,7 @@
     </header>
     <body>
         <h2>Project List</h2>
+        {% if error_message %}<p style="color:red"><strong>{{ error_message }}</strong></p>{% endif %}
         {% if project_list %}
             <ul>
                 {% for project in project_list %}
@@ -13,5 +14,11 @@
         {% else %}
             <p>No projects to show</p>
         {% endif %}
+
+        <form action="/ddm/" method="POST">
+            {% csrf_token %}
+            <input type="text" name="description" placeholder="Description"/>
+            <input type="submit" value="Submit"/>
+        </form>
     </body>
 </html>

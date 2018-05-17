@@ -41,3 +41,17 @@ class ProjectRepoTests(TestCase):
         self.assertEqual(projects[0]["id"] == projects[1]["id"] , False) 
         self.assertEqual(projects[0]["description"] == projects[1]["description"] , False) 
 
+    def test_one_project_create(self):
+        """
+        Should be able to create a single project.
+        """
+        desc = "Test project"
+        pr = ProjectRepo()
+        res = pr.create_project(desc)
+        try:
+            res["id"]  # Key should be in dictionary
+        except:
+            assert False
+        self.assertEqual(res["description"], desc)
+        self.assertEqual(len(pr.get_all_projects()), 1)
+
