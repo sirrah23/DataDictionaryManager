@@ -5,6 +5,9 @@ from .repos import ProjectRepo
 
 
 def index(request):
+    """
+    The main page of the site where the user can interact with their project list.
+    """
     error_message = ""
     pr = ProjectRepo()
     if request.method == 'POST':
