@@ -1,7 +1,7 @@
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseNotFound
 from django.shortcuts import render
 
-from .repos import ProjectRepo
+from .repos import ProjectRepo, DataEntryRepo
 
 
 def index(request):
@@ -19,3 +19,21 @@ def index(request):
     context['error_message'] = error_message
     context['project_list'] = project_list
     return render(request, 'ddm/index.html', context)
+
+def project(request, project_id):
+    """
+    The page to view the data entries associated with a project (and other
+    project details).
+    """
+    # TODO: What if the project does not exist?
+    pr = ProjectRepo()
+    dr = DataEntryRepo()
+    project = pr.get_project_by_id(project_id)
+    if not project:
+        return HttpResponseNotFound('Project does not exist')
+    entries = dr.get_entry_by_project(project_id=project_id)
+    context = {}
+    context['project_desc'] = project['description']
+    context['data_entries'] = entries
+    return render(request, 'ddm/project.html', context)
+

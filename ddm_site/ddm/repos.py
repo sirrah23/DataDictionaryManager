@@ -1,4 +1,4 @@
-from .models import Project
+from .models import Project, DataEntry
 
 
 class ProjectRepo:
@@ -9,7 +9,7 @@ class ProjectRepo:
     def __init__(self):
         self.project_model = Project
 
-    def _project_to_dict(self, p):
+    def _to_dict(self, p):
         """
         Convert a project object to a dictionary.
         """
@@ -18,12 +18,19 @@ class ProjectRepo:
         r["description"] = p.description
         return r
 
+    def get_project_by_id(self, project_id):
+        """
+        Get a project via its ID.
+        """
+        p = self.project_model.objects.filter(id=project_id)
+        return self._to_dict(p[0]) if len(p) > 0 else None
+
     def get_all_projects(self):
         """
         Get all projects in the database.
         """
         data = self.project_model.objects.all()
-        return list(map(self._project_to_dict, data))
+        return list(map(self._to_dict, data))
 
     def create_project(self, desc):
         """
@@ -31,5 +38,38 @@ class ProjectRepo:
         """
         p = self.project_model(description=desc)
         p.save()
-        return self._project_to_dict(p)
+        return self._to_dict(p)
 
+
+class DataEntryRepo:
+    """
+    A repository through which Data Entry information can be accessed.
+    """
+    def __init__(self):
+        self.data_entry_model = DataEntry
+
+    def _to_dict(self, de):
+        """
+        Convert a DataEntry object to a dictionary.
+        """
+        r = {}
+        r["id"] = de.id
+        r["name"] = de.name
+        return r
+
+    def create_data_entry(self, name, project_id):
+        """
+        Create a row in the Data Entry table associated with the given
+        project.
+        """
+        de = self.data_entry_model(project_id=project_id)
+        de.save()
+        return self._to_dict(de)
+
+    def get_entry_by_project(self, project_id):
+        """
+
+        """
+        return list(
+            map(lambda d: self._to_dict(d),
+                self.data_entry_model.objects.filter(project_id=project_id)))

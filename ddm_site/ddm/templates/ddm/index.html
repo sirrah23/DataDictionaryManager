@@ -8,7 +8,7 @@
         {% if project_list %}
             <ul>
                 {% for project in project_list %}
-                <li><a href="/ddm/{{project.id}}/">{{project.description}}</a></li>
+                <li><a href="/ddm/project/{{project.id}}/">{{project.description}}</a></li>
                 {% endfor %}
             </ul>
         {% else %}
