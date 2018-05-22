@@ -68,7 +68,7 @@ class DataEntryRepo:
 
     def get_entry_by_project(self, project_id):
         """
-
+        Get all data entries associated with the input project.
         """
         return list(
             map(lambda d: self._to_dict(d),
