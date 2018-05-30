@@ -6,7 +6,6 @@ class Project(models.Model):
 
 
 class DataEntry(models.Model):
-    # TODO: Add some properties here e.g. cardinality, optional
     name = models.CharField(max_length=80)
     project = models.ForeignKey(
         'Project',
@@ -26,3 +25,7 @@ class DataEntryPair(models.Model):
         related_name='child',
         on_delete=models.CASCADE,
     )
+    mandatory = models.NullBooleanField(default=None)
+    optional = models.NullBooleanField(default=None)
+    lower_limit = models.NullBooleanField(null=True, default=None)
+    upper_limit = models.NullBooleanField(null=True, default=None)

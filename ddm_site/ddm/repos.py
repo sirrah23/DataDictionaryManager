@@ -7,7 +7,7 @@ class ProjectRepo:
     """
 
     def __init__(self):
-        self.project_model = Project
+        self.project_model = Project  # TODO: Does this really provide any benefit?
 
     def _to_dict(self, p):
         """
@@ -46,7 +46,7 @@ class DataEntryRepo:
     A repository through which Data Entry information can be accessed.
     """
     def __init__(self):
-        self.data_entry_model = DataEntry
+        self.data_entry_model = DataEntry  # TODO: Does this really provide any benefit?
 
     def _to_dict(self, de):
         """
