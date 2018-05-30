@@ -3,20 +3,17 @@
         <title>Data Dictionary Manager</title>
     </header>
     <body>
-        <h2>{{project_name}}</h2>
+        <h2>{{project_desc}}</h2>
+        <a href="/ddm/project/{{project_id}}/dataentry">New data entry</a></br>
+        <a href="/ddm">Go back</a>
         {% if data_entries %}
         <ul>
             {% for entry in data_entries %}
-            <li><a href="/ddm/project/{{entry.id}}/">{{entry.name}}</a></li>
+            <li><a href="/ddm/dataentry/{{entry.id}}/">{{entry.name}}</a></li>
             {% endfor %}
         </ul>
         {% else %}
         <p>No entries to show</p>
         {% endif %}
-        <form action="/ddm/data_entry" method="POST">
-            {% csrf_token %}
-            <input type="text" name="description" placeholder="Description"/>
-            <input type="submit" value="Submit"/>
-        </form>
     </body>
 </html>

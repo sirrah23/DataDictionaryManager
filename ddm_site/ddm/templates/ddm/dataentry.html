@@ -1,0 +1,17 @@
+<html>
+    <header>
+        <title>Data Dictionary Manager</title>
+    </header>
+    <body>
+        <h2>{{project_desc}}</h2>
+        <p>Create a new data entry for this project!</p>
+        {% if error_message %}
+            <p style='color:red'">{{error_message}}</p>
+        {% endif %}
+        <form action="/ddm/project/{{project_id}}/dataentry" method="POST">
+            {% csrf_token %}
+            <input type="text" name="name" placeholder="Name"/>
+            <input type="submit" value="Submit"/>
+        </form>
+    </body>
+</html>

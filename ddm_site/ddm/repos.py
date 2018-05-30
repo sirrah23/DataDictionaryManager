@@ -62,7 +62,8 @@ class DataEntryRepo:
         Create a row in the Data Entry table associated with the given
         project.
         """
-        de = self.data_entry_model(project_id=project_id)
+        #TODO: Add a test for name
+        de = self.data_entry_model(name=name, project_id=project_id)
         de.save()
         return self._to_dict(de)
 

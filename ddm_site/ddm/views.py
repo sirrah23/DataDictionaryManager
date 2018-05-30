@@ -1,5 +1,5 @@
 from django.http import HttpResponse, HttpResponseNotFound
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 
 from .repos import ProjectRepo, DataEntryRepo
 
@@ -33,7 +33,26 @@ def project(request, project_id):
         return HttpResponseNotFound('Project does not exist')
     entries = dr.get_entry_by_project(project_id=project_id)
     context = {}
+    context['project_id'] = project['id']
     context['project_desc'] = project['description']
     context['data_entries'] = entries
     return render(request, 'ddm/project.html', context)
 
+def dataentry(request, project_id):
+    """
+    The page where the user can create a new data entry and associate it with a
+    project.
+    """
+    error_message = ""
+    if request.method == 'POST':
+        dr = DataEntryRepo()
+        name = request.POST['name']
+        if not name or len(name) == 0:  #TODO: Check if data entry already exists
+            error_message = "No Data Entry name provided"
+        else:
+            dr.create_data_entry(name, project_id)
+            return redirect('project', project_id=project_id)
+    context = {}
+    context['error_message'] = error_message
+    context['project_id'] = project_id
+    return render(request, 'ddm/dataentry.html', context)
