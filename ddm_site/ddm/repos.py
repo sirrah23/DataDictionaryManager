@@ -55,6 +55,7 @@ class DataEntryRepo:
         r = {}
         r["id"] = de.id
         r["name"] = de.name
+        r["project_id"] = de.project_id
         return r
 
     def create_data_entry(self, name, project_id):
@@ -62,7 +63,6 @@ class DataEntryRepo:
         Create a row in the Data Entry table associated with the given
         project.
         """
-        #TODO: Add a test for name
         de = self.data_entry_model(name=name, project_id=project_id)
         de.save()
         return self._to_dict(de)
