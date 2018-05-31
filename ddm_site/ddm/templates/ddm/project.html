@@ -9,7 +9,7 @@
         {% if data_entries %}
         <ul>
             {% for entry in data_entries %}
-            <li><a href="/ddm/dataentry/{{entry.id}}/">{{entry.name}}</a></li>
+            <li><a href="/ddm/project/{{project_id}}/dataentry/{{entry.id}}/">{{entry.name}}</a></li>
             {% endfor %}
         </ul>
         {% else %}

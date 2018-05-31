@@ -56,3 +56,24 @@ def dataentry(request, project_id):
     context['error_message'] = error_message
     context['project_id'] = project_id
     return render(request, 'ddm/dataentry.html', context)
+
+def dataentrypairs(request, project_id, dataentry_id):
+    """
+    The page where a user can create relationships between a parent and child
+    data entry pair.
+    """
+    if request.method == 'POST':
+        print("Posting") #TODO: Temporary print for now
+    pr = ProjectRepo()
+    dr = DataEntryRepo()
+    project = pr.get_project_by_id(project_id)
+    dataentries = dr.get_entry_by_project(project_id)
+    curr_dataentry = list(filter(lambda d: d['id'] == dataentry_id, dataentries))[0]
+    context = {}
+    context['project_id'] = project_id
+    context['dataentry_id'] = dataentry_id
+    context['project_desc'] = project['description']
+    context['dataentry_name'] = curr_dataentry['name']
+    context['dataentries'] = dataentries
+    return render(request, 'ddm/dataentrypairs.html', context)
+

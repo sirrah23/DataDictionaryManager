@@ -74,3 +74,11 @@ class DataEntryRepo:
         return list(
             map(lambda d: self._to_dict(d),
                 self.data_entry_model.objects.filter(project_id=project_id)))
+
+    def get_entry_by_id(self, dataentry_id):
+        """
+        Obtain the data associated with a DataEntry via the given id.
+        """
+        #TODO: Implement this
+        pass
+
