@@ -15,7 +15,11 @@ class DataEntry(models.Model):
 
 
 class DataEntryPair(models.Model):
-    #TODO: Add reference to project id here
+    project = models.ForeignKey(
+        'Project',
+        related_name='project',
+        on_delete=models.CASCADE,
+    )
     parent = models.ForeignKey(
         'DataEntry',
         related_name='parent',

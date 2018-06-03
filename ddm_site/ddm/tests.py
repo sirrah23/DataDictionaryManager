@@ -112,11 +112,13 @@ class DataEntryPairsRepoTests(TestCase):
         pr = ProjectRepo()
         dr = DataEntryRepo()
         dpr = DataEntryPairRepo()
+
         res_p = pr.create_project('Test Project')
         res_d1 = dr.create_data_entry('DE 1', res_p['id'])
         res_d2 = dr.create_data_entry('DE 2', res_p['id'])
-        dpr.create_data_entry_pair(res_d1['id'], res_d2['id'])
+        dpr.create_data_entry_pair(res_p['id'], res_d1['id'], res_d2['id'])
         res_dpr = dpr.get_data_entry_pairs(res_p['id'], res_d1['id'])
+
         self.assertEqual(res_dpr['project_id'], res_p['id'])
         self.assertEqual(res_dpr['parent']['id'], res_d1['id'])
         self.assertEqual(res_dpr['parent']['name'], res_d1['name'])
@@ -136,15 +138,19 @@ class DataEntryPairsRepoTests(TestCase):
         pr = ProjectRepo()
         dr = DataEntryRepo()
         dpr = DataEntryPairRepo()
+
         res_p = pr.create_project('Test Project')
         res_d1 = dr.create_data_entry('DE 1', res_p['id'])
         res_d2 = dr.create_data_entry('DE 2', res_p['id'])
         res_d3 = dr.create_data_entry('DE 3', res_p['id'])
         res_d4 = dr.create_data_entry('DE 4', res_p['id'])
-        dpr.create_data_entry_pair(res_d1['id'], res_d2['id'])
-        dpr.create_data_entry_pair(res_d1['id'], res_d3['id'], mandatory=True, lower_limit=5)
-        dpr.create_data_entry_pair(res_d1['id'], res_d4['id'], optional=True, upper_limit=5)
+        dpr.create_data_entry_pair(res_p['id'], res_d1['id'], res_d2['id'])
+        dpr.create_data_entry_pair(res_p['id'], res_d1['id'], res_d3['id'],
+                                   mandatory=True, lower_limit=5)
+        dpr.create_data_entry_pair(res_p['id'], res_d1['id'], res_d4['id'],
+                                   optional=True, upper_limit=5)
         res_dpr = dpr.get_data_entry_pairs(res_p['id'], res_d1['id'])
+
         self.assertEqual(res_dpr['project_id'], res_p['id'])
         self.assertEqual(res_dpr['parent']['id'], res_d1['id'])
         self.assertEqual(res_dpr['parent']['name'], res_d1['name'])

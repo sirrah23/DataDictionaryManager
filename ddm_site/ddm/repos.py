@@ -92,17 +92,20 @@ class DataEntryPairRepo:
     def __init__(self):
         self.data_entry_pair_model = DataEntryPair  # TODO: Does this really provide any benefit?
 
-    def create_data_entry_pair(self, parent_id, child_id, mandatory=False,
-                               optional=False, lower_limit=None, upper_limit=None):
+    def create_data_entry_pair(self, project_id, parent_id,
+                               child_id, mandatory=False,
+                               optional=False, lower_limit=None,
+                               upper_limit=None):
         """
         Store a data entry pair (parent+child+attributes) into the database.
         """
-        dep = self.data_entry_pair_model(parent_id=parent_id, child_id=child_id,
-                                         mandatory=mandatory, optional=optional,
-                                         lower_limit=lower_limit, upper_limit=upper_limit)
+        dep = self.data_entry_pair_model(project_id=project_id, parent_id=parent_id,
+                                         child_id=child_id, mandatory=mandatory,
+                                         optional=optional, lower_limit=lower_limit,
+                                         upper_limit=upper_limit)
         dep.save()
 
-    def _build_data_entry_pair_struct(self, project_id, data):
+    def _build_data_entry_pair_struct(self, data):
         """
         Build a dictionary structure representing the parent-child
         relationship.
@@ -110,11 +113,13 @@ class DataEntryPairRepo:
         if len(data) == 0:
             return None
         r = {}
+
         # Initialize
-        r['project_id'] = project_id
         r['parent'] = {}
         r['children'] = []
+
         # Build
+        r['project_id'] = data[0].project.id
         r['parent']['id'] = data[0].parent.id
         r['parent']['name'] = data[0].parent.name
         for item in data:
@@ -133,6 +138,7 @@ class DataEntryPairRepo:
         Get a structure representing all of the data entry pairs associated
         with the provided data entry parent.
         """
-        data = self.data_entry_pair_model.objects.filter(parent_id=parent_id)
-        return self._build_data_entry_pair_struct(project_id, data)
+        data = self.data_entry_pair_model.objects.filter(project_id=project_id,
+                                                         parent_id=parent_id)
+        return self._build_data_entry_pair_struct(data)
 
