@@ -1,4 +1,4 @@
-from .models import Project, DataEntry
+from .models import Project, DataEntry, DataEntryPair
 
 
 class ProjectRepo:
@@ -45,6 +45,7 @@ class DataEntryRepo:
     """
     A repository through which Data Entry information can be accessed.
     """
+
     def __init__(self):
         self.data_entry_model = DataEntry  # TODO: Does this really provide any benefit?
 
@@ -81,4 +82,57 @@ class DataEntryRepo:
         """
         #TODO: Implement this
         pass
+
+
+class DataEntryPairRepo:
+    """
+    A repository through which Data Entry information can be accessed.
+    """
+
+    def __init__(self):
+        self.data_entry_pair_model = DataEntryPair  # TODO: Does this really provide any benefit?
+
+    def create_data_entry_pair(self, parent_id, child_id, mandatory=False,
+                               optional=False, lower_limit=None, upper_limit=None):
+        """
+        Store a data entry pair (parent+child+attributes) into the database.
+        """
+        dep = self.data_entry_pair_model(parent_id=parent_id, child_id=child_id,
+                                         mandatory=mandatory, optional=optional,
+                                         lower_limit=lower_limit, upper_limit=upper_limit)
+        dep.save()
+
+    def _build_data_entry_pair_struct(self, project_id, data):
+        """
+        Build a dictionary structure representing the parent-child
+        relationship.
+        """
+        if len(data) == 0:
+            return None
+        r = {}
+        # Initialize
+        r['project_id'] = project_id
+        r['parent'] = {}
+        r['children'] = []
+        # Build
+        r['parent']['id'] = data[0].parent.id
+        r['parent']['name'] = data[0].parent.name
+        for item in data:
+            r['children'].append({
+                'id': item.child.id,
+                'name': item.child.name,
+                'mandatory': item.mandatory,
+                'optional': item.optional,
+                'lower_limit': item.lower_limit,
+                'upper_limit': item.upper_limit
+            })
+        return r
+
+    def get_data_entry_pairs(self, project_id, parent_id):
+        """
+        Get a structure representing all of the data entry pairs associated
+        with the provided data entry parent.
+        """
+        data = self.data_entry_pair_model.objects.filter(parent_id=parent_id)
+        return self._build_data_entry_pair_struct(project_id, data)
 

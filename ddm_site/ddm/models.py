@@ -15,6 +15,7 @@ class DataEntry(models.Model):
 
 
 class DataEntryPair(models.Model):
+    #TODO: Add reference to project id here
     parent = models.ForeignKey(
         'DataEntry',
         related_name='parent',
@@ -27,5 +28,5 @@ class DataEntryPair(models.Model):
     )
     mandatory = models.NullBooleanField(default=None)
     optional = models.NullBooleanField(default=None)
-    lower_limit = models.NullBooleanField(null=True, default=None)
-    upper_limit = models.NullBooleanField(null=True, default=None)
+    lower_limit = models.PositiveIntegerField(null=True, default=None)
+    upper_limit = models.PositiveIntegerField(null=True, default=None)

@@ -1,6 +1,6 @@
 from django.test import TestCase
 
-from .repos import ProjectRepo, DataEntryRepo
+from .repos import ProjectRepo, DataEntryRepo, DataEntryPairRepo
 from .models import Project
 
 class ProjectRepoTests(TestCase):
@@ -128,3 +128,45 @@ class DataEntryPairsRepoTests(TestCase):
         self.assertEqual(res_dpr['children'][0]['lower_limit'], None)
         self.assertEqual(res_dpr['children'][0]['upper_limit'], None)
 
+    def test_many_data_entry_pair(self):
+        """
+        Should be able to create a multiple data entry pair for a given
+        project.
+        """
+        pr = ProjectRepo()
+        dr = DataEntryRepo()
+        dpr = DataEntryPairRepo()
+        res_p = pr.create_project('Test Project')
+        res_d1 = dr.create_data_entry('DE 1', res_p['id'])
+        res_d2 = dr.create_data_entry('DE 2', res_p['id'])
+        res_d3 = dr.create_data_entry('DE 3', res_p['id'])
+        res_d4 = dr.create_data_entry('DE 4', res_p['id'])
+        dpr.create_data_entry_pair(res_d1['id'], res_d2['id'])
+        dpr.create_data_entry_pair(res_d1['id'], res_d3['id'], mandatory=True, lower_limit=5)
+        dpr.create_data_entry_pair(res_d1['id'], res_d4['id'], optional=True, upper_limit=5)
+        res_dpr = dpr.get_data_entry_pairs(res_p['id'], res_d1['id'])
+        self.assertEqual(res_dpr['project_id'], res_p['id'])
+        self.assertEqual(res_dpr['parent']['id'], res_d1['id'])
+        self.assertEqual(res_dpr['parent']['name'], res_d1['name'])
+        self.assertEqual(len(res_dpr['children']), 3)
+        # Child 1
+        self.assertEqual(res_dpr['children'][0]['id'], res_d2['id'])
+        self.assertEqual(res_dpr['children'][0]['name'], res_d2['name'])
+        self.assertEqual(res_dpr['children'][0]['mandatory'], False)
+        self.assertEqual(res_dpr['children'][0]['optional'], False)
+        self.assertEqual(res_dpr['children'][0]['lower_limit'], None)
+        self.assertEqual(res_dpr['children'][0]['upper_limit'], None)
+        # Child 2
+        self.assertEqual(res_dpr['children'][1]['id'], res_d3['id'])
+        self.assertEqual(res_dpr['children'][1]['name'], res_d3['name'])
+        self.assertEqual(res_dpr['children'][1]['mandatory'], True)
+        self.assertEqual(res_dpr['children'][1]['optional'], False)
+        self.assertEqual(res_dpr['children'][1]['lower_limit'], 5)
+        self.assertEqual(res_dpr['children'][1]['upper_limit'], None)
+        # Child 3
+        self.assertEqual(res_dpr['children'][2]['id'], res_d4['id'])
+        self.assertEqual(res_dpr['children'][2]['name'], res_d4['name'])
+        self.assertEqual(res_dpr['children'][2]['mandatory'], False)
+        self.assertEqual(res_dpr['children'][2]['optional'], True)
+        self.assertEqual(res_dpr['children'][2]['lower_limit'], None)
+        self.assertEqual(res_dpr['children'][2]['upper_limit'], 5)
