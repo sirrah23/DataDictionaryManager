@@ -65,6 +65,9 @@ class ProjectRepoTests(TestCase):
         res = pr.get_project_by_id(pid)
         self.assertEqual(res['description'], desc)
 
+
+class DataEntryRepoTests(TestCase):
+
     def test_create_a_data_entry(self):
         """
         Should be able to create a valid data entry.
@@ -99,3 +102,29 @@ class ProjectRepoTests(TestCase):
         self.assertEqual(len(details), 2)
         self.assertEqual(details[0]['id'] in [res_d1['id'], res_d2['id']], True)
         self.assertEqual(details[1]['id'] in [res_d1['id'], res_d2['id']], True)
+
+class DataEntryPairsRepoTests(TestCase):
+
+    def test_one_data_entry_pair(self):
+        """
+        Should be able to create a single data entry pair for a given project.
+        """
+        pr = ProjectRepo()
+        dr = DataEntryRepo()
+        dpr = DataEntryPairRepo()
+        res_p = pr.create_project('Test Project')
+        res_d1 = dr.create_data_entry('DE 1', res_p['id'])
+        res_d2 = dr.create_data_entry('DE 2', res_p['id'])
+        dpr.create_data_entry_pair(res_d1['id'], res_d2['id'])
+        res_dpr = dpr.get_data_entry_pairs(res_p['id'], res_d1['id'])
+        self.assertEqual(res_dpr['project_id'], res_p['id'])
+        self.assertEqual(res_dpr['parent']['id'], res_d1['id'])
+        self.assertEqual(res_dpr['parent']['name'], res_d1['name'])
+        self.assertEqual(len(res_dpr['children']), 1)
+        self.assertEqual(res_dpr['children'][0]['id'], res_d2['id'])
+        self.assertEqual(res_dpr['children'][0]['name'], res_d2['name'])
+        self.assertEqual(res_dpr['children'][0]['mandatory'], False)
+        self.assertEqual(res_dpr['children'][0]['optional'], False)
+        self.assertEqual(res_dpr['children'][0]['lower_limit'], None)
+        self.assertEqual(res_dpr['children'][0]['upper_limit'], None)
+
