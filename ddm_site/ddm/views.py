@@ -3,6 +3,7 @@ from django.shortcuts import render, redirect
 
 from .repos import ProjectRepo, DataEntryRepo, DataEntryPairRepo
 
+#TODO: Pack context-build,g data-validation, etc. into separate functions
 
 def index(request):
     """
@@ -12,8 +13,10 @@ def index(request):
     pr = ProjectRepo()
     if request.method == 'POST':
         desc = request.POST['description']
-        if not desc or len(desc) == 0: error_message = "No project description provided"
-        elif not pr.create_project(desc): error_message = "Unable to create new project"
+        if not desc or len(desc) == 0:
+            error_message = "No project description provided"
+        elif not pr.create_project(desc):
+            error_message = "Unable to create new project"
     project_list = pr.get_all_projects()
     context = {}
     context['error_message'] = error_message
@@ -62,13 +65,24 @@ def dataentrypairs(request, project_id, dataentry_id):
     The page where a user can create relationships between a parent and child
     data entry pair.
     """
-    if request.method == 'POST':
-        print("Posting") #TODO: Temporary print for now
-
     # Get repository objects
     pr = ProjectRepo()
     dr = DataEntryRepo()
     dpr = DataEntryPairRepo()
+
+    if request.method == 'POST':
+        mandatory = request.POST['constraint'] == 'mandatory'
+        optional = request.POST['constraint'] == 'mandatory'
+        dpr.create_data_entry_pair(project_id,
+                                   dataentry_id,
+                                   request.POST['child'],
+                                   mandatory=mandatory,
+                                   optional=optional,
+                                   lower_limit=request.POST['lower_limit'],
+                                   upper_limit=request.POST['upper_limit'])
+        return redirect('dataentrypairs',
+                        project_id=project_id,
+                        dataentry_id=dataentry_id)
 
     # Pull project & data-entry data
     project = pr.get_project_by_id(project_id)
