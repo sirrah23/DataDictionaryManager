@@ -75,9 +75,12 @@ def dataentrypairs(request, project_id, dataentry_id):
     dataentries = dr.get_entry_by_project(project_id)
     pairs = dpr.get_data_entry_pairs(project_id, dataentry_id)
 
-    # Split dataentry list
+    # Split dataentry list and filter
     curr_dataentry = [d for d in dataentries if d['id'] == dataentry_id][0]
     other_dataentry = [d for d in dataentries if d['id'] != dataentry_id]
+    if pairs:
+        other_dataentry = [d for d in other_dataentry if d['id'] not in
+                           [c['id'] for c in pairs['children']]]
 
     # Build context for web-page
     context = {}
