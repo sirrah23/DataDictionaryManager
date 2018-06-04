@@ -5,7 +5,29 @@
     <body>
         <h2>{{project_desc}}</h2>
         <h3>{{dataentry_name}}</h3>
-        <p>Create a new data entry relationships!</p>
+        {% if not error_message and not children%}
+            <strong>No data entry relationships to show!</strong>
+        {% else %}
+            <div id="data_entry_pairs">
+                {% for child in children %}
+                <div class="child">
+                    <ul>
+                        <li>
+                            <a href="/ddm/project/{{project_id}}/dataentry/{{child.id}}">
+                                {{child.name}}
+                            </a>
+                        </li>
+                        <ul>
+                            <li>Mandatory: {{child.mandatory}}</li>
+                            <li>Optional: {{child.optional}}</li>
+                            <li>Lower Limit: {{child.lower_limit}}</li>
+                            <li>Upper Limit: {{child.upper_limit}}</li>
+                        <ul>
+                    </ul>
+                </div>
+                {% endfor %}
+            </div>
+        {% endif %}
         {% if error_message %}
             <p style='color:red'">{{error_message}}</p>
         {% endif %}
@@ -15,12 +37,12 @@
                 {% for dataentry in dataentries %}
                     <option value="{{dataentry.id}}">{{dataentry.name}}</option>
                 {% endfor %}
-            </select></br>
+            </select>
             <input id="number" type="number" placeholder="Lower Limit" name="lower_limit">
             <input id="number" type="number" placeholder="Upper Limit" name="upper_limit"></br>
             <input type="radio" name="constraint" value="neither" checked>Neither<br>
             <input type="radio" name="constraint" value="mandatory">Mandatory<br>
-            <input type="radio" name="constraint" value="optional">Optional  
+            <input type="radio" name="constraint" value="optional">Optional<br>
             <input type="submit" value="Submit"/>
         </form>
     </body>

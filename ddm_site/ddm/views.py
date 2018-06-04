@@ -1,7 +1,7 @@
 from django.http import HttpResponse, HttpResponseNotFound
 from django.shortcuts import render, redirect
 
-from .repos import ProjectRepo, DataEntryRepo
+from .repos import ProjectRepo, DataEntryRepo, DataEntryPairRepo
 
 
 def index(request):
@@ -64,16 +64,29 @@ def dataentrypairs(request, project_id, dataentry_id):
     """
     if request.method == 'POST':
         print("Posting") #TODO: Temporary print for now
+
+    # Get repository objects
     pr = ProjectRepo()
     dr = DataEntryRepo()
+    dpr = DataEntryPairRepo()
+
+    # Pull project & data-entry data
     project = pr.get_project_by_id(project_id)
     dataentries = dr.get_entry_by_project(project_id)
-    curr_dataentry = list(filter(lambda d: d['id'] == dataentry_id, dataentries))[0]
+    pairs = dpr.get_data_entry_pairs(project_id, dataentry_id)
+
+    # Split dataentry list
+    curr_dataentry = [d for d in dataentries if d['id'] == dataentry_id][0]
+    other_dataentry = [d for d in dataentries if d['id'] != dataentry_id]
+
+    # Build context for web-page
     context = {}
     context['project_id'] = project_id
     context['dataentry_id'] = dataentry_id
     context['project_desc'] = project['description']
     context['dataentry_name'] = curr_dataentry['name']
-    context['dataentries'] = dataentries
+    context['dataentries'] = other_dataentry
+    context['children'] = pairs['children'] if pairs else None
+
     return render(request, 'ddm/dataentrypairs.html', context)
 
